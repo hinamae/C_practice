@@ -1,0 +1,18 @@
+CC				= tcc.exe
+CFLAGS		=
+DEST			= 
+LDFLAGS		=
+LIBS				= 
+OBJS          =  test.obj escape.obj bclink.obj
+PROGRAM       = ktest.exe
+
+all:	$(PROGRAM)
+
+$(PROGRAM):	$(OBJS)
+		$(CC) $(OBJS) $(CFLAGS) $(LDFLAGS) $(LIBS) -o $(PROGRAM)
+
+clean:	
+	rm -f *.obj
+
+install:	$(PROGRAM)
+		install -s $(PROGRAM) $(DEST)
