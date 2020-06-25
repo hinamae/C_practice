@@ -1,0 +1,18 @@
+
+#define LOGOHEIGHT 15
+#define DELLN    "                                     "
+#define LCAR1    "     ^       ^                (O)         "
+#define LCAR2    "   / x | __/ x \\            (O)          "
+#define LCAR3    "  |             \\          (O)           "
+#define LCAR4    "  | (00)/\\ (00) |         (O)          "
+#define LCAR5    "  |   / *  \\    /         (O)          "
+#define LCAR6    "   \\ / \\/\\/ \\  /         (O)           "
+#define LCAR7    "     ========== _________(O)             "
+#define LCAR8    "     \\                   |           "
+#define LCAR9    "      \\_________________//          "
+#define LCAR10   "     //    ||    //     ||          "
+#define LCAR11   "   //      ||   //      ||          "
+#define LCAR12   " O)(O)(O)(O)(O)(O)(O)(O)(O)(O)(O)(O)    "
+#define LCAR13   " O)(O)(O)(O)(O)(O)(O)(O)(O)(O)(O)(O)    "
+#define LCAR14   " O)(O)(O)(O)(O)(O)(O)(O)(O)(O)(O)(O)    "
+#define LCAR15   "      (O)                   (O)    "
