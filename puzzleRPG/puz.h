@@ -1,1 +1,1 @@
-#define		ESC	'\033'
+#define ESC  '\x1b'

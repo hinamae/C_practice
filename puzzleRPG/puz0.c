@@ -2,31 +2,10 @@
 // インクルード宣言
 
 #include <stdio.h>
+#include "puz.h"
 #include "puz1.c"
 
 
-// 列挙型宣言
-typedef enum Element{FIRE, WALTER, WIND, EARTH, LIFE, EMPTY}Element;
-
-// グローバル定数の宣言
-const char ELEMENT_SYMBOLS[EMPTY+1]={'$','~','@','#','&',' '};
-const char ESCAPE_SEQ_COLOR[EMPTY+1]={1,6,2,3,5,0};
-
-
-
-
-typedef struct DUNGEON{
-    Monster* monsters;
-    int Monsters_num;
-} Dungeon;
-
-// プロトタイプ宣言
-void goDungeon(char* playerName);
-void DoBattle(Monster doraque_monster);
-
-
-
-// 関数宣言
 
 int main(int argc, char** argv){
 
