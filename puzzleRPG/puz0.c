@@ -20,19 +20,21 @@ int main(int argc, char** argv){
     Monster* our_players_p;
 
     myparty = organize(argv[1],our_players,4);
-
+    Party* myparty_p;
+    myparty_p = &myparty;
 
 
     int monster_num=5;
     Monster doraque_Monsters[] = {
-        {"スライム",100,100,WALTER,10,5},
+        {"スライム",300,300,WALTER,10,5},
         {"メタルスライム",200,200,EARTH,20,15},
         {"ドラキー",300,300,WIND,30,25},
         {"モーモン",400,400,WIND,40,30},
         {"キングメタル",800,800,FIRE,50,40}
     };
     Dungeon dungeon = {doraque_Monsters , 5};
-
+    Dungeon* dungeon_p;
+    dungeon_p = &dungeon;
     goDungeon(myparty, dungeon);
 
     // char* monster1 = "スライム";
@@ -49,9 +51,11 @@ int main(int argc, char** argv){
     //                            };
     
     int i;
-    for(i=0 ; i< dungeon.Monsters_num ; i++){
-        DoBattle(dungeon.monsters[i]);
-    }
+    int flg;
+    
+    // for(i=0 ; i< dungeon.Monsters_num ; i++){
+    DoBattle(dungeon_p,myparty_p);
+    // }
     return 0;
 
 

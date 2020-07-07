@@ -38,23 +38,80 @@ typedef struct DUNGEON{
 
 // プロトタイプ宣言
 Party organize(char* player, Monster* ourplayers, int player_num);
-void goDungeon(Party myparty);
-void DoBattle(Monster dungeon_p);
+int onPlayerTurn(Monster* player ,Monster* monster);
+int doAttack(Monster* player, Monster* monster);
+int onEnemyTurn(Monster* player, Monster* monster);
+int doEnemyAttack(Monster* player, Monster* monster);
+
+void goDungeon(Party myparty,Dungeon dungeon);
+void DoBattle(Dungeon* dungeon,Party* party);
 void printMonsterName(Monster doraque_monster);
 void showParty(Party myparty);
 
 
-
-void goDungeon(Party myparty){
+void goDungeon(Party myparty,Dungeon dungeon){
     showParty(myparty);
 }
 
-void DoBattle(Monster dungeon_p){
-        printMonsterName(dungeon_p);
-        printf( "が現れた\n");
-        printMonsterName(dungeon_p);
-        printf( "を倒した！\n");
+// 倒したモンスターの数を返す
+void DoBattle(Dungeon* dungeon,Party* party){
+        int i=0;
+        Monster* monster_p;
+        Monster* player_p;
+        int flg_win=1 , flg_loose, flg;
+        int current_player_id = 0;
+        int current_monster_id = 0;
+
+        for(i = 0; i < 100 ; i++){
+            if(flg_win == 1){
+                printMonsterName(dungeon->monsters[current_monster_id]);
+                printf( "が現れた\n");
+            }
+                // プレイヤーのターン
+                player_p = &party->our_players[current_player_id];
+                monster_p = &dungeon->monsters[current_monster_id];
+                flg_win = onPlayerTurn(player_p,monster_p);
+                //プレイヤーが勝利していなければ、モンスターのターン
+                if(flg_win != 1){
+                    //モンスターのターン(1が戻り値ならプレイヤーの負け)
+                    flg_loose = onEnemyTurn(player_p,monster_p);
+
+                //プレイヤーが勝利していれば、
+                }else{
+                    printMonsterName(dungeon->monsters[current_monster_id]);
+                    printf( "を倒した！\n");
+                    current_monster_id += 1;
+                    if(dungeon->Monsters_num != current_monster_id){                    
+                        printf("%sはさらに奥へと進んだ\n",party->player);
+                    }
+                }
+                // プレイヤーがモンスターに敗北していれば、
+                if (flg_win != 1 && flg_loose == 1){
+                    printf("%sは敗北した!\n",party->our_players[current_player_id].name);
+                    current_player_id += 1;
+                    //次のプレイヤーを用意する
+                    //プレイヤーの数を計算。4人が全員いなくなっていたら、all_loose=1
+                }
+
+                if(dungeon->Monsters_num <= current_monster_id){
+                    printf("~~~~~~~~~~~~~~~~~~~~\n");
+                    printf("ダンジョンを制覇した！\n");
+                    printf("~~~~~~~~~~~~~~~~~~~~\n");
+                    break;
+                }
+
+
+                if(party->our_players_num <= current_player_id){
+                    printf( "GAME OVER\n");
+                    break;
+                }
+            }
+            
 }
+        
+        
+
+
 
 void printMonsterName(Monster doraque_monster){
     printf("%c[4%dm%c%s%c",ESC,
@@ -97,4 +154,45 @@ void showParty(Party myparty){
     }
     printf("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
     
+}
+
+int onPlayerTurn(Monster* player ,Monster* monster){
+    printf("【%sのターン】\n",player->name);
+    return doAttack(player , monster);
+}
+
+//モンスターの現状のHPを返す
+int doAttack(Monster* player, Monster* monster){
+    printf("ダミー攻撃で80のダメージを与えた\n");
+    monster->HP -= 80;
+    printf("モンスターのHP:%d\n",monster->HP);
+
+    if( monster->HP <= 0){
+        // モンスターのHPが0以下なら1を返す
+        return 1;
+    }else{
+        //それ以外は0を返す
+        return 0;
+    }
+}
+
+int onEnemyTurn(Monster* player, Monster* monster){
+    printf("【%sのターン】\n",monster->name);
+    return doEnemyAttack(player , monster);
+
+}
+
+int doEnemyAttack(Monster* player, Monster* monster){
+    printf("ダミー攻撃で20のダメージを与えた\n");
+    player->HP -= 20;
+    printf("プレイヤーのHP:%d\n",player->HP);
+    if( player->HP <= 0){
+        // プレイヤーのHPが0以下なら1を返す
+        // プレイヤーの負け
+        return 1;
+    }else{
+        //それ以外は0を返す
+        return 0;
+    }
+
 }
