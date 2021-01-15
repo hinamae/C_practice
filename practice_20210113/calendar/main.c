@@ -19,7 +19,6 @@ int check_leap_year(int year);
 int view_all_calendar(CalParameter *cal_display_data_p ,CalMonth *month_data_p, int *nMonth_p, int argc);
 
 
-
 int view_calendar(CalMonth *month_data_p,int i);
 
 
@@ -75,8 +74,6 @@ int manager_calendar(int argc, CalParameter *cal_display_data_p){
     nMonth_p = &nMonth;
 
     month_data_p[1].month = 12;
-    // printf("配列の1の月:%d\n",month_data_p[1].month);
-
 
     if(argc==2){
         nMonth = 12;
@@ -87,15 +84,6 @@ int manager_calendar(int argc, CalParameter *cal_display_data_p){
     }
 
     calculate_calendar(cal_display_data_p, nMonth_p, month_data_p);
-    // printf("配列1の月：%d\n",month_data_p[1].month);
-    // printf("配列2の月：%d\n",month_data_p[2].month);
-
-
-    // month_data_p ->start_wday = 5;
-    // month_data_p ->ndays = 31;
-    // month_data_p ->year = 2020;
-    // month_data_p ->month = 1;
-
 
     view_all_calendar(cal_display_data_p ,month_data_p, nMonth_p, argc);
     return 0;
@@ -187,19 +175,10 @@ int calculate_calendar(CalParameter* cal_display_data_p, int* nMonth_p, CalMonth
         // 月
         month_data_p[i].month = i+1;
 
-        // printf("月のデータ↓：%d\n",month_data_p[i].month);
-        // printf("曜日：%d\n",month_data_p[i].start_wday);
-        // printf("日数：%d\n",month_data_p[i].ndays);
-        // printf("年：%d\n",month_data_p[i].year);
-        // printf("%d :合計日付\n",sum_days_from_1996);
-        // printf("%d :合計月\n",sum_months_from_Jan);
-
-        printf("\n");
     }
 
     return 1;
 }
-
 
 
 int check_leap_year(int year){
@@ -212,26 +191,47 @@ int check_leap_year(int year){
     return 0;
 }
 
-
-
  int view_all_calendar(CalParameter *cal_display_data_p ,CalMonth *month_data_p, int *nMonth_p, int argc){
-     printf("月の個数：%d\n",*nMonth_p);
+    //  printf("月の個数：%d\n",*nMonth_p);
      int nMonth;
      nMonth = *nMonth_p;
 
+    int month_days_data[12]={31,28,31,30,31,30,31,31,30,31,30,31};
+    int month_days_data_leap[12]={31,29,31,30,31,30,31,31,30,31,30,31};
+    char month_name[12][10] = {"January","February","March","April","May","June","July","August","September","October","November","December"};
+    char week_name[30] = " SUN MON TUE WED THU FRI SAT\n";
      // 一年間分表示
      if(argc==2){
          for(int i=0; i<12; i++){
+             printf("%16s\n\n",month_name[i]);
+             printf("%s",week_name);
         	 view_calendar(month_data_p,i);
          }
      }
      // 一ヶ月分表示
      else if(argc==3){
-    	 view_calendar(month_data_p,cal_display_data_p->month-1);
+        printf("%16s\n\n",month_name[cal_display_data_p->month-1]);
+        printf("%s",week_name);
+    	view_calendar(month_data_p,cal_display_data_p->month-1);
      }
      // 指定された月の数だけ表示
      else if(argc==4){
-    	 printf("echo\n");
+        if(cal_display_data_p->month + cal_display_data_p-> num <=13 ){
+            for(int i=cal_display_data_p->month-1; i < cal_display_data_p->month -1 + cal_display_data_p->num ; i++){
+                printf("%16s\n\n",month_name[i]);
+                printf("%s",week_name);
+        	    view_calendar(month_data_p,i);
+            }
+        }
+        // 年をまたいでしまう場合
+        else{
+            for(int i=cal_display_data_p->month-1 ; i<12; i++){
+                printf("%16s\n\n",month_name[i]);
+                printf("%s",week_name);
+        	    view_calendar(month_data_p,i);
+            }
+        }
+
      }
     return 0;
 
@@ -247,7 +247,7 @@ int check_leap_year(int year){
      year = month_data_p[i].year;
      month = month_data_p[i].month;
 
-    printf("start_wday : %d\n",start_wday);
+    // printf("start_wday : %d\n",start_wday);
      
      int current_day=1;
      for(int i=0; i<6 ; i++){
@@ -271,8 +271,15 @@ int check_leap_year(int year){
 
 
      for(int i=0; i<6 ; i++){
-         printf("%2d %2d %2d %2d %2d %2d %2d\n", a[i][0],a[i][1],a[i][2],a[i][3],a[i][4],a[i][5],a[i][6]);
-
+        for(int j=0; j<7;j++){
+         
+         if(a[i][j] ==0){
+             printf("    ");
+         }else{
+            printf("%4d", a[i][j]);
+            }
+        }
+        printf("\n");
      }
 
      return 0;
