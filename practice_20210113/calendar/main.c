@@ -16,18 +16,12 @@ int calculate_calendar(CalParameter* cal_display_data_p, int* nMonth_p, CalMonth
 int check_leap_year(int year);
 
 // カレンダー表示
-// int view_calendar(CalMonth *month_data_p, int *nMonth_p);
+int view_all_calendar(CalParameter *cal_display_data_p ,CalMonth *month_data_p, int *nMonth_p, int argc);
 
 
 
-// char* itoa(int val, int base);
+int view_calendar(CalMonth *month_data_p,int i);
 
-// 計算
-// int calculate_calendar(
-//     CalParameter* cal_display_data_p,
-//     int* nMonth_p,
-//     CalMonth* month_data_p
-// );
 
 int main(int argc, char *argv[]){
 
@@ -37,7 +31,9 @@ int main(int argc, char *argv[]){
         exit(EXIT_FAILURE);
     }
 
-    int year,month,num;
+    int year=0;
+	int month=0;
+	int num=0;
 
     year = atoi(argv[1]);
 
@@ -49,9 +45,6 @@ int main(int argc, char *argv[]){
         num = atoi(argv[3]);
     }
 
-    printf("年%d\n",year);
-    printf("月%d\n",month);
-    printf("月の個数%d\n",num);
 
     CalParameter cal_display_data;
     CalParameter *cal_display_data_p;
@@ -61,7 +54,7 @@ int main(int argc, char *argv[]){
     cal_display_data_p->month = month;
     cal_display_data_p->num = num;
 
-    
+
 
     manager_calendar(argc,cal_display_data_p);
 
@@ -80,7 +73,10 @@ int manager_calendar(int argc, CalParameter *cal_display_data_p){
     int nMonth;
     int *nMonth_p;
     nMonth_p = &nMonth;
-    
+
+    month_data_p[1].month = 12;
+    // printf("配列の1の月:%d\n",month_data_p[1].month);
+
 
     if(argc==2){
         nMonth = 12;
@@ -91,14 +87,17 @@ int manager_calendar(int argc, CalParameter *cal_display_data_p){
     }
 
     calculate_calendar(cal_display_data_p, nMonth_p, month_data_p);
+    // printf("配列1の月：%d\n",month_data_p[1].month);
+    // printf("配列2の月：%d\n",month_data_p[2].month);
+
 
     // month_data_p ->start_wday = 5;
     // month_data_p ->ndays = 31;
     // month_data_p ->year = 2020;
     // month_data_p ->month = 1;
-    
 
-    // view_calendar(month_data_p, nMonth_p);
+
+    view_all_calendar(cal_display_data_p ,month_data_p, nMonth_p, argc);
     return 0;
 }
 
@@ -115,11 +114,11 @@ int check_parameters(int argc,CalParameter *cal_display_data_p){
         printf("エラー2\n usage: MyCal year [month[num]] \n yearは2000-9999で指定してください\n");
         exit(EXIT_FAILURE);
     }
-    if(3 <= argc && month <= 0 || 13 <= month){
+    if(3 <= argc && (month <= 0 || 13 <= month)){
         printf("エラー3\n usage: MyCal year [month[num]] \n monthは1-12で指定してください\n");
         exit(EXIT_FAILURE);
     }
-    if(4 <= argc && num <= 0 || 13 <= num){
+    if(4 <= argc && (num <= 0 || 13 <= num)){
         printf("エラー4\n usage: MyCal year [month[num]] \n numは1-12で指定してください\n");
         exit(EXIT_FAILURE);
 
@@ -134,59 +133,69 @@ int check_parameters(int argc,CalParameter *cal_display_data_p){
 
 int calculate_calendar(CalParameter* cal_display_data_p, int* nMonth_p, CalMonth* month_data_p){
 
-    int start_wday,ndays,year,month;
-    int sum_days_from_1996 = 0;
 
     int month_days_data[12]={31,28,31,30,31,30,31,31,30,31,30,31};
     int month_days_data_leap[12]={31,29,31,30,31,30,31,31,30,31,30,31};
 
-    int sum_years_from_1996;
-    sum_years_from_1996 = cal_display_data_p->year - 1996;
+    for(int i=0; i<12; i++){
+        int sum_days_from_1996 = 0;
 
-    int current_year=1996;
-    for(int i=0; i<sum_years_from_1996; i++){
-        if(check_leap_year(current_year) == 0){
-            sum_days_from_1996 = sum_days_from_1996 + 365;
-        }else if(check_leap_year(current_year)==1){
-            sum_days_from_1996 = sum_days_from_1996 + 366;
+        // スタートする曜日
+        int sum_years_from_1996=0;
+        sum_years_from_1996 = cal_display_data_p->year - 1996;
+
+        int current_year=1996;
+        for(int i=0; i<sum_years_from_1996; i++){
+            if(check_leap_year(current_year) == 0){
+                sum_days_from_1996 = sum_days_from_1996 + 365;
+            }else if(check_leap_year(current_year)==1){
+                sum_days_from_1996 = sum_days_from_1996 + 366;
+            }
+            current_year = current_year + 1;
         }
-        current_year = current_year + 1;
-    }
 
-    int sum_months_from_Jan;
-    sum_months_from_Jan = cal_display_data_p->month-1;
 
-    int whether_leap_year;
+        int sum_months_from_Jan=0;
+        sum_months_from_Jan = i;
 
-    whether_leap_year = check_leap_year(cal_display_data_p->year);
-    if(whether_leap_year==0){
-        for(int i=0; i<sum_months_from_Jan; i++){
-            sum_days_from_1996 = sum_days_from_1996 + month_days_data[i];
+        int whether_leap_year;
+
+        whether_leap_year = check_leap_year(cal_display_data_p->year);
+        if(whether_leap_year==0){
+            for(int j=0; j<sum_months_from_Jan; j++){
+                sum_days_from_1996 = sum_days_from_1996 + month_days_data[j];
+            }
+        }else if(whether_leap_year == 1){
+            for(int j=0; j<sum_months_from_Jan; j++){
+                sum_days_from_1996 = sum_days_from_1996 + month_days_data_leap[j];
+            }
         }
-    }else if(whether_leap_year == 1){
-        for(int i=0; i<sum_months_from_Jan; i++){
-            sum_days_from_1996 = sum_days_from_1996 + month_days_data_leap[i];
+
+        month_data_p[i].start_wday = (sum_days_from_1996 + 1)%7;
+
+
+        // 日数
+        whether_leap_year = check_leap_year(cal_display_data_p->year);
+        if(whether_leap_year == 0){
+            month_data_p[i].ndays = month_days_data[i];
+        }else if(whether_leap_year==1){
+            month_data_p[i].ndays = month_days_data_leap[i];
         }
+
+        // 年
+        month_data_p[i].year = cal_display_data_p->year;
+        // 月
+        month_data_p[i].month = i+1;
+
+        // printf("月のデータ↓：%d\n",month_data_p[i].month);
+        // printf("曜日：%d\n",month_data_p[i].start_wday);
+        // printf("日数：%d\n",month_data_p[i].ndays);
+        // printf("年：%d\n",month_data_p[i].year);
+        // printf("%d :合計日付\n",sum_days_from_1996);
+        // printf("%d :合計月\n",sum_months_from_Jan);
+
+        printf("\n");
     }
-
-    month_data_p->start_wday = (sum_days_from_1996 + 1)%7;
-
-    whether_leap_year = check_leap_year(cal_display_data_p->year);
-    if(whether_leap_year == 0){
-        month_data_p->ndays = month_days_data[cal_display_data_p->month-1];
-    }else if(whether_leap_year==1){
-        month_data_p->ndays = month_days_data_leap[cal_display_data_p->month-1];
-        
-    }
-    month_data_p->year = cal_display_data_p->year;
-    month_data_p->month = cal_display_data_p->month;
-
-    printf("曜日：%d\n",month_data_p->start_wday);
-    printf("日数：%d\n",month_data_p->ndays);
-    printf("年：%d\n",month_data_p->year);
-    printf("月：%d\n",month_data_p->month);
-
-
 
     return 1;
 }
@@ -204,66 +213,67 @@ int check_leap_year(int year){
 }
 
 
-// int view_all_calendar(CalMonth *month_data_p, int *nMonth_p, int argc){
-//     printf("月の個数：%d\n",*nMonth_p);
-//     int nMonth;
-//     nMonth = *nMonth_p;
 
-//     // 一年間分表示
-//     if(argc==2){
-//         for(int i=0; i<12; i++){
-//         }
+ int view_all_calendar(CalParameter *cal_display_data_p ,CalMonth *month_data_p, int *nMonth_p, int argc){
+     printf("月の個数：%d\n",*nMonth_p);
+     int nMonth;
+     nMonth = *nMonth_p;
 
-//     }
-//     // 一ヶ月分表示
-//     else if(argc==3){
+     // 一年間分表示
+     if(argc==2){
+         for(int i=0; i<12; i++){
+        	 view_calendar(month_data_p,i);
+         }
+     }
+     // 一ヶ月分表示
+     else if(argc==3){
+    	 view_calendar(month_data_p,cal_display_data_p->month-1);
+     }
+     // 指定された月の数だけ表示
+     else if(argc==4){
+    	 printf("echo\n");
+     }
+    return 0;
 
-//     }
-//     // 指定された月の数だけ表示
-//     else if(argc==4){
-
-//     }
-
-
-// }
-
-
-// int view_calendar(CalMonth *month_data_p){
-//     int start_wday,ndays,year,month;
-//     // char moji[25];
-//     int a[6][7]={0};
-//     start_wday = month_data_p -> start_wday;
-//     ndays = month_data_p -> ndays;
-//     year = month_data_p -> year;
-//     month = month_data_p -> month;
+ }
 
 
-//     int current_day=1;
-//     for(int i=0; i<6 ; i++){
-//         if(i==0){
-//             for(int j=start_wday; j<7; j++){
-//                 a[i][j] = current_day;
-//                 current_day=current_day +1;
-//             }
-//         }
-//         else{
-//             for(int j=0; j<7;j++){
-//                 if( ndays < current_day ){
-//                     break;
-//                 }
-//                 a[i][j] = current_day;
-//                 current_day=current_day +1;
-//             }
-//         }
-//     }
+ int view_calendar(CalMonth *month_data_p, int i){
+     int start_wday,ndays,year,month;
+     // char moji[25];
+     int a[6][7]={0};
+     start_wday = month_data_p[i].start_wday;
+     ndays = month_data_p[i].ndays;
+     year = month_data_p[i].year;
+     month = month_data_p[i].month;
+
+    printf("start_wday : %d\n",start_wday);
+     
+     int current_day=1;
+     for(int i=0; i<6 ; i++){
+         if(i==0){
+             for(int j=start_wday; j<7; j++){
+                 a[i][j] = current_day;
+                 current_day=current_day +1;
+             }
+         }
+         else{
+             for(int j=0; j<7;j++){
+                 if( ndays < current_day ){
+                     break;
+                 }
+                 a[i][j] = current_day;
+                 current_day=current_day +1;
+             }
+         }
+     }
 
 
 
-//     for(int i=0; i<6 ; i++){
-//         printf("%2d %2d %2d %2d %2d %2d %2d\n", a[i][0],a[i][1],a[i][2],a[i][3],a[i][4],a[i][5],a[i][6]);
-    
-//     }
+     for(int i=0; i<6 ; i++){
+         printf("%2d %2d %2d %2d %2d %2d %2d\n", a[i][0],a[i][1],a[i][2],a[i][3],a[i][4],a[i][5],a[i][6]);
 
-//     return 0;
-// }
+     }
 
+     return 0;
+ }
